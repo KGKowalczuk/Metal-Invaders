@@ -531,6 +531,7 @@ explosions = pygame.sprite.Group()
 
 current_wave = 0
 wave_is_active = False
+endgame_cooldown = 0
 
 spawn_wave()
 
@@ -568,7 +569,9 @@ while True:
         perks.draw(screen)
         perks.update()
 
-        if lives <= 0 or player.sprites()[0].get_health() <= 0: game_active = False
+        if lives <= 0 or player.sprites()[0].get_health() <= 0: 
+            game_active = False
+            endgame_cooldown = 30
 
         get_target_x(enemy_group)
         ui()
@@ -598,6 +601,7 @@ while True:
                     lives = 5
                     enemy_group.empty()
         else:
+            endgame_cooldown -= 1
             screen.fill((14,10,15))
             message = big_font.render('YOU DIED!', False, (108,19,37))
             message_rect = message.get_rect(center = (400,220))
@@ -606,7 +610,7 @@ while True:
             screen.blit(score_message,score_message_rect)
             screen.blit(message,message_rect)
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_SPACE]:
+            if endgame_cooldown == 0 and keys[pygame.K_SPACE]:
                     game_active = True
                     start_time = int(pygame.time.get_ticks() / 1000)
                     current_wave = 0
